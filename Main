@@ -1,0 +1,102 @@
+package trafic_prac;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class TrafficSignal{
+	int redduration , greenduration , path , delay , traveltime;
+
+	public TrafficSignal(int redduration, int greenduration, int paths, int delay, int traveltime) {
+		super();
+		this.redduration = redduration;
+		this.greenduration = greenduration;
+		this.path = path;
+		this.delay = delay;
+		this.traveltime = traveltime;
+	}
+	public int getSignalDelay(int arrivalTime) {
+		int cycleduration = redduration + greenduration;
+		int timeincycle  = arrivalTime % cycleduration;
+		return timeincycle < redduration ?(redduration - timeincycle)+delay:delay;
+	}
+}
+
+public class AdvancedTrafficNavigation {
+	public static void main (String []args ) {
+		Scanner s = new Scanner(System.in);
+		
+		System.out.println("ENTER THE NUMBER OF SIGNALS");
+		int numsignals = s.nextInt();
+		 
+		System.out.println("SIGNAL INTERVALS ARE SAME(YES/NO)");
+		boolean sameintervel = s.next().equalsIgnoreCase("yes");
+		
+		System.out.println("SIGNAL HAVE SAME RED AND GREEN LIGHT DURATION (YES/NO)");
+		boolean samelightduration = s.next().equalsIgnoreCase("yes");
+		
+		System.out.println("SIGNAL CONSISTS TWO WAY PATH (YES/NO)");
+		boolean samepath = s.next().equalsIgnoreCase("yes");
+		
+		
+		List <TrafficSignal> signals = new ArrayList<>();
+		List <Integer> traveltimes = new ArrayList<>();
+		
+		int commonred =0 , commongreen = 0 , commonpath =0;
+		
+		if(samelightduration) {
+			System.out.println("ENTER THE RED LIGHT DURATION : ");
+			commonred = s.nextInt();
+			System.out.println("ENTER THE GREEN LIGHT DURATION");
+			commonpath = s.nextInt();
+			
+		}
+		if(samepath) {
+			System.out.println("ENTER 2 FOR 2 WAY PATH 4 FOR 4 WAY PATH");
+			commonpath = s.nextInt();
+		}
+		for(int i = 0 ; i < numsignals; i++) {
+			System.out.println("ENTER THE "+(i+1)+"SIGNAL DETAILS");
+			
+			 int traveltime;
+	            if (sameintervel) {
+	                if (i == 0) {
+	                    System.out.print("ENTER THE COMMON TYRAVEL TIME BETWEEEN THE SIGNALS : ");
+	                    traveltime = s.nextInt(); 
+	                } else {
+	                    traveltime = traveltimes.get(0);
+				}
+	            }else {
+	                System.out.print("ENTER THE TRAVEL TIME TO REACH THE SIGNAL :  ");
+	                traveltime = s.nextInt();
+				}
+	            traveltimes.add(traveltime);
+	            
+	            int redduration = samelightduration ? commonred : 0;
+	            int greenduration = samelightduration ? commongreen : 0;
+	            if(!samelightduration) {
+	            	System.out.println("ENTER THE RED LIGHT DURATION");
+	            	redduration = s.nextInt();
+	            	
+	            	System.out.println("ENTER THE RED LIGHT DURATION");
+	            	greenduration = s.nextInt();
+	            }
+	            int paths = samepath ? commonpath : 0;
+	            if(!samepath) {
+	            	System.out.println("ENTER THE PATH 2 FOR 2 , 4 FOR 4 : ");
+	            	paths = s.nextInt();
+	            }
+	            System.out.println("ENTER THE DELAY OF EACH SIGNAL :");
+	            int delay = s.nextInt();
+	            
+	            signals.add(new TrafficSignal(redduration, greenduration , delay , paths , traveltime));
+			}
+		int totalTime = 0;
+        for (int i = 0; i < numsignals; i++) {
+            totalTime += signals.get(i).traveltime;
+            int delay = signals.get(i).getSignalDelay(totalTime);
+            totalTime += delay;
+        }
+        System.out.println("\nTotal Time to Reach Destination: " + totalTime + " seconds");
+        s.close();
+	}
+}
